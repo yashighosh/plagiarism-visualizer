@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-gray-200 font-sans antialiased;
+    margin: 0;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface/80 backdrop-blur-md border border-white/10 shadow-2xl rounded-2xl;
+  }
+  
+  .glass-input {
+    @apply bg-black/40 border border-white/10 rounded-xl focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all duration-300 placeholder-gray-600;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-primary to-primaryDark hover:from-primaryDark hover:to-indigo-700 text-white font-medium rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 font-medium rounded-xl transition-all duration-300;
+  }
+}
+
+/* Custom Scrollbar for Textareas */
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
