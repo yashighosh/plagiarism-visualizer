@@ -142,7 +142,7 @@ export default function App() {
             </div>
             <input 
               type="range" 
-              min="1" max="20" 
+              min="3" max="20" 
               value={kValue} 
               onChange={(e) => setKValue(parseInt(e.target.value))}
               className="w-full accent-primary h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
@@ -210,20 +210,20 @@ export default function App() {
               )}
             </div>
             <div className="m-4 flex-1 relative rounded-xl border border-white/10 bg-black/40 overflow-auto">
-               <textarea
-                 className="absolute inset-0 w-full h-full p-4 resize-none bg-transparent focus:outline-none leading-relaxed text-sm"
-                 value={suspectedText}
-                 onChange={(e) => setSuspectedText(e.target.value)}
-                 placeholder="Paste suspected text here to check..."
-                 spellCheck="false"
-                 style={results ? { color: 'transparent', caretColor: 'white', position: 'relative', zIndex: 10 } : {}}
-               />
-               {results && (
-                 <div className="absolute inset-0 w-full h-full p-4 whitespace-pre-wrap leading-relaxed text-sm text-gray-400 pointer-events-none overflow-auto">
-                   {renderHighlightedText(suspectedText, results.matchedIndices, maxCheckedIndex)}
-                 </div>
-               )}
-             </div>
+              {!results ? (
+                <textarea
+                  className="absolute inset-0 w-full h-full p-4 resize-none bg-transparent focus:outline-none leading-relaxed text-sm"
+                  value={suspectedText}
+                  onChange={(e) => setSuspectedText(e.target.value)}
+                  placeholder="Paste suspected text here to check..."
+                  spellCheck="false"
+                />
+              ) : (
+                <div className="absolute inset-0 w-full h-full p-4 whitespace-pre-wrap leading-relaxed text-sm text-gray-400">
+                  {renderHighlightedText(suspectedText, results.matchedIndices, maxCheckedIndex)}
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
