@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ShieldAlert, Play, CheckCircle2, AlertTriangle, FileText, Settings, RefreshCw } from 'lucide-react';
 import { analyzePlagiarism } from './lib/rabinKarp';
@@ -54,10 +54,12 @@ export default function App() {
       const stepMs = Math.max(20, Math.min(200, targetDurationMs / results.steps.length));
       
       animationRef.current = setTimeout(() => {
-        setCurrentStepIndex(prev => prev + 1);
+        const nextIndex = currentStepIndex + 1;
+        setCurrentStepIndex(nextIndex);
+        if (nextIndex >= results.steps.length - 1) {
+          setIsPlaying(false);
+        }
       }, stepMs);
-    } else if (isPlaying && results && currentStepIndex >= results.steps.length - 1) {
-      setIsPlaying(false);
     }
 
     return () => clearTimeout(animationRef.current);
@@ -156,8 +158,8 @@ export default function App() {
                   checked={showAnimation}
                   onChange={(e) => setShowAnimation(e.target.checked)}
                 />
-                <div className={\`block w-14 h-8 rounded-full transition-colors duration-300 \${showAnimation ? 'bg-primary' : 'bg-gray-600'}\`}></div>
-                <div className={\`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 flex items-center justify-center \${showAnimation ? 'transform translate-x-6' : ''}\`}>
+                <div className={`block w-14 h-8 rounded-full transition-colors duration-300 ${showAnimation ? 'bg-primary' : 'bg-gray-600'}`}></div>
+                <div className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 flex items-center justify-center ${showAnimation ? 'transform translate-x-6' : ''}`}>
                   {showAnimation && <Play className="w-3 h-3 text-primary" />}
                 </div>
               </div>
@@ -201,7 +203,7 @@ export default function App() {
               {results && (
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-gray-500 font-mono">{suspectedText.length} chars</span>
-                  <span className={\`text-xs font-bold px-3 py-1 rounded-full \${results.similarity > 20 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}\`}>
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${results.similarity > 20 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
                     {results.similarity.toFixed(1)}% Match
                   </span>
                 </div>
@@ -258,21 +260,21 @@ export default function App() {
                 {/* Sliding Window Visualization */}
                 <div className="lg:col-span-2 bg-black/30 rounded-xl p-6 border border-white/5 relative overflow-hidden">
                   <h3 className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-4">Sliding Window</h3>
-                  <div className="font-mono text-xl tracking-widest text-center overflow-x-auto whitespace-nowrap pb-4">
+                  <div className="font-mono text-2xl tracking-normal text-center overflow-x-auto whitespace-pre pb-4 bg-black/20 p-4 rounded-lg">
                     {/* Render window context */}
-                    <span className="text-gray-600">
-                      {suspectedText.substring(Math.max(0, step.index - 5), step.index)}
+                    <span className="text-gray-500 opacity-50">
+                      {suspectedText.substring(Math.max(0, step.index - 8), step.index)}
                     </span>
                     <motion.span 
                       key={step.index}
                       initial={{ scale: 1.1, color: '#9ca3af' }}
                       animate={{ scale: 1, color: '#ffffff' }}
-                      className="inline-block mx-1 px-2 py-1 bg-primary/20 border border-primary/50 rounded-md text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+                      className="inline-block mx-1 px-1 py-0.5 bg-primary/20 border border-primary/50 rounded-md text-white shadow-[0_0_15px_rgba(99,102,241,0.3)] font-bold"
                     >
                       {step.substring}
                     </motion.span>
-                    <span className="text-gray-600">
-                      {suspectedText.substring(step.index + kValue, step.index + kValue + 5)}
+                    <span className="text-gray-500 opacity-50">
+                      {suspectedText.substring(step.index + kValue, step.index + kValue + 8)}
                     </span>
                   </div>
 
@@ -289,7 +291,7 @@ export default function App() {
                   <h3 className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-4">Comparison Status</h3>
                   
                   <div className="space-y-4">
-                    <div className={\`flex items-center gap-3 p-3 rounded-lg border \${step.isHashMatch ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/10 text-gray-400'}\`}>
+                    <div className={`flex items-center gap-3 p-3 rounded-lg border ${step.isHashMatch ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/10 text-gray-400'}`}>
                       <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center shrink-0">
                         {step.isHashMatch ? <CheckCircle2 className="w-5 h-5" /> : <div className="w-2 h-2 rounded-full bg-gray-600" />}
                       </div>
@@ -299,7 +301,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className={\`flex items-center gap-3 p-3 rounded-lg border \${step.isExactMatch ? 'bg-matchHighlight border-yellow-500/30 text-matchText shadow-[0_0_20px_rgba(234,179,8,0.2)]' : step.isSpuriousHit ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-white/5 border-white/10 text-gray-400 opacity-50'}\`}>
+                    <div className={`flex items-center gap-3 p-3 rounded-lg border ${step.isExactMatch ? 'bg-matchHighlight border-yellow-500/30 text-matchText shadow-[0_0_20px_rgba(234,179,8,0.2)]' : step.isSpuriousHit ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-white/5 border-white/10 text-gray-400 opacity-50'}`}>
                       <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center shrink-0">
                         {step.isExactMatch ? <ShieldAlert className="w-5 h-5 text-yellow-500" /> : step.isSpuriousHit ? <AlertTriangle className="w-5 h-5" /> : <div className="w-2 h-2 rounded-full bg-gray-600" />}
                       </div>
